@@ -131,7 +131,7 @@ translate1 @{term  "order (matsum 0 (matsum (Suc 0) (matUtrans H (Suc 0) (matUtr
 fun isTrue x = 
       if x="True\n" then true
       else false   
-fun decide p = "~/quantum.py"^" "^p^""
+fun decide p = "./quantum.py"^" "^p^""
     |> Isabelle_System.bash_output
     |>fst
     |> isTrue;
