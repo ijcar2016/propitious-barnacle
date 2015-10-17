@@ -1,0 +1,7 @@
+var_type=[2,2]
+H=np.mat([[1,1],[1,-1]])/sqrt(2)
+M0=np.kron(left_n(0,2)*right_n(0,2),np.eye(2))
+M1=np.kron(left_n(1,2)*right_n(1,2),np.eye(2))
+P=np.kron(np.eye(2),left_n(0,2)*right_n(0,2))
+Q=np.kron(left_n(0,2)*right_n(0,2),left_n(0,2)*right_n(0,2))
+U=np.eye(4)
