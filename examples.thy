@@ -17,7 +17,7 @@ apply(vcg,auto)
 apply quantum_oracle
 done
 (*
-lemma shor:"valid P  (Init q0 0;Utrans H 0;Utrans U 10;Utrans (dag U) 10;Utrans (dag H) 0;
+lemma shor:"valid P  (Init q0 0;Utrans H 0;Utrans C_U 10;Utrans (dag C_U) 10;Utrans (dag H) 0;
                     Cond [(M0,SKIP,p0),(M1,SKIP,p1)])   Q"
 apply(rule ord_wlp,auto)
 apply quantum_oracle
