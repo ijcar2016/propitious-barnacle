@@ -71,6 +71,33 @@ def matUtrans(U,n,m):
             flag=1
     ot=temp.dot(m).dot(adjoint(temp))
     return ot
+def matUtransC(C_U,n,m):
+    global record
+    A0=np.array([[1,0],[0,0]])
+    A1=np.array([[0,0],[0,1]])
+    index=record.keys()
+    index.sort()
+    index.remove(index[0])
+    n=Split(n)
+    if n[0]==0:
+        temp0=A0
+        temp1=A1
+    else:
+        temp0=np.eye(record[0])
+        temp1=np.eye(record[0])
+    for i in index:
+        if i==n[0]:
+            temp0=np.kron(temp0,A0)
+            temp1=np.kron(temp1,A1)
+        elif i==n[1]:
+            temp0=np.kron(temp0,np.eye(record[i]))
+            temp1=np.kron(temp1,adjoint(C_U))
+        else:
+            temp0=np.kron(temp0,np.eye(record[i]))
+            temp1=np.kron(temp1,np.eye(record[i]))
+    temp=temp0+temp1
+    ot=temp.dot(m).dot(adjoint(temp))
+    return ot
 def fixpoint(m0,m1,q,p):
     return (m0.T).dot(p).dot(m0)+(m1.T).dot(Q).dot(m1)
 def order(m1,m2):
@@ -88,6 +115,7 @@ def order(m1,m2):
 term=sys.argv[1]
 #term='order#matsum#0,matsum#1,matsum#2,matsum#3,matUtrans#Delta,2,matUtrans#H,0,matUtrans#H,1,matUtrans#H,2,fixpoint#M0,M1,Q,#adjoint#N0@.dot#P@.dot#N0@+#adjoint#N1@.dot#P@.dot#N1@+#adjoint#N2@.dot#P@.dot#N2@+#adjoint#N3@.dot#P@.dot#N3@+mat0@@@@@@@@@@@@@,I@'
 #term='order#matUtrans#Or,10,matUtrans#H,0,matUtrans#H,1,matUtrans#Ph,10,matUtrans#H,0,matUtrans#H,1,G@@@@@@,Q@'
+#term='order(matsum(0,matUtrans(H,0,matUtrans(C_U,10,matUtrans(adjoint(C_U),10,matUtrans(adjoint(H),0,(adjoint(M0).dot(Q).dot(M0)+(adjoint(M1).dot(Q).dot(M1)))))))),P)'
 record={}
 path=os.path.join(os.path.abspath(os.curdir),'param.txt')
 execfile(path)
@@ -96,6 +124,9 @@ for i in range(len(var_type)):
 term=term.replace('+mat0','')
 term=term.replace('#','(')
 term=term.replace('@',')')
+term=term.replace('s(C_U','sC(C_U')
+term=term.replace('(adjoint(C_U','C(adjoint(C_U')
 #extract_record(term)
 result=eval(term)
 print result==0
+
