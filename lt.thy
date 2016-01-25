@@ -9,28 +9,31 @@ fun translate t =
   let
     fun trans t =
       (case t of
-        @{term "op = :: bool\<Rightarrow>bool\<Rightarrow>bool"} $ t $ u  =>
-        Buffer.add "(" #>
-        trans t #>
-        Buffer.add "\<Leftrightarrow>" #>
-        trans u #>
-        Buffer.add ")"
-      | Free (n,@{typ bool})=>
+        @{term "op = :: Mat\<Rightarrow>Mat\<Rightarrow>bool"} $ t $ u  =>
+           Buffer.add "check_I#"#>
+           trans t#>
+           Buffer.add "@"
+     | Free (n,@{typ Mat })=>
         Buffer.add n
       | _ => error "inacceptable term ")
   in Buffer.content (trans t Buffer.empty) 
 end;
+(*  (translate @{term "a=I"});  *)
 
 fun translate1 t =
   let
     fun trans t =
       (case t of
-        @{term " mat_add :: Mat \<Rightarrow> Mat \<Rightarrow> Mat"} $ t $ u  =>  
-        Buffer.add "#" #>
+       @{term "op = :: Mat\<Rightarrow>Mat\<Rightarrow>bool"} $ t $ u  =>
+           Buffer.add "check_I#"#>
+           trans t#>
+           Buffer.add "@"
+      | @{term " mat_add :: Mat \<Rightarrow> Mat \<Rightarrow> Mat"} $ t $ u  =>  
+        Buffer.add "#" #>(* ( *)
         trans t #>
         Buffer.add "+" #>
         trans u #>
-        Buffer.add "@"
+        Buffer.add "@"(* ) *)
       | @{term " matsum::nat list\<Rightarrow>nat\<Rightarrow>Mat\<Rightarrow>Mat"}$t $u $ v =>
          Buffer.add "matsum#" #>
          trans u#>
@@ -51,10 +54,6 @@ fun translate1 t =
          Buffer.add ","#>
         trans t#>
          Buffer.add "@"
-      | @{term "op = :: Mat\<Rightarrow>Mat\<Rightarrow>bool"} $ t $ u  =>   
-        trans t #>
-        Buffer.add "==" #>
-        trans u 
       | @{term " mat_mult :: Mat \<Rightarrow> Mat \<Rightarrow> Mat"} $ t $ u  =>  
         trans t #>
         Buffer.add ".dot#" #>
@@ -108,6 +107,18 @@ fun translate1 t =
         Buffer.add "mat0"
       | @{term " I:: Mat"}  =>  
         Buffer.add "I"
+      |  @{term "op \<in> :: Mat\<Rightarrow>Mat set\<Rightarrow>bool"} $ t $ u  =>
+           Buffer.add "check#"#>
+           trans t#>
+           Buffer.add ","#>
+           trans u#>
+           Buffer.add "@"
+    | @{term " uMat :: Mat set"}  =>  
+        Buffer.add "uMat"
+    | @{term " rhoMat :: Mat set"}  =>  
+        Buffer.add "rho"
+    | @{term " predMat :: Mat set"}  =>  
+        Buffer.add "pred"
       | Free (n,@{typ int})=>
         Buffer.add n
       | Free (n,@{typ nat})=>
@@ -121,8 +132,6 @@ fun translate1 t =
       | _ => error "inacceptable term tao")
   in Buffer.content (trans t Buffer.empty) 
 end;
-
-
 
 
 fun isTrue x = 
@@ -140,7 +149,9 @@ oracle quantum_oracle = {* fn ct =>
   else error "Proof failed."*}
 
 ML{*
- (* (translate1 @{term "  basicnew.less P (matsum q0 0 (matUtrans H 0
+(*decide (translate1 @{term "mat_add (mat_mult (dag M0) M0) (mat_mult (dag M1) M1) = I"});*)
+
+ (* (translate1 @{term " basic.less P (matsum q0 0 (matUtrans H 0
       (matUtrans U (Suc 0)(matUtrans (dag U) (Suc 0)
       (matUtrans (dag H) 0 (mat_add (mat_mult (mat_mult (dag M0) Q) M0)
       (mat_add (mat_mult (mat_mult (dag M1) Q) M1) zero)))))))"});
