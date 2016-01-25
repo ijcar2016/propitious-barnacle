@@ -4,6 +4,8 @@ import sys
 import os
 import numpy as np
 from sympy import *
+uMat="uMat"
+pred="pred"
 def left_n(n,N):
     temp=np.zeros([N,1])
     temp[n][0]=1
@@ -112,6 +114,29 @@ def order(m1,m2):
                     print i
 		    flag=1
 	return flag
+def check(m,typ):
+    d=len(m)
+    if typ=="uMat":
+        temp=m.dot(m.T)
+        for i in range(d):
+            if temp[i,i]!=1:
+                return 1
+        return 0
+    if typ=="pred":
+        if order(m,np.zeros([d,d]))==0 and order(np.eye(d),m)==0:
+            return 0
+        return 1
+def check_I(m):
+    d=len(m)
+    flag=0
+    for i in range(d):
+        if m[i,i]!=1:
+            flag=1;
+    if flag==1:
+        for i in range(d):
+            if m[i,i]!=2:
+                return 1
+    return 0
 term=sys.argv[1]
 #term='order#matsum#0,matsum#1,matsum#2,matsum#3,matUtrans#Delta,2,matUtrans#H,0,matUtrans#H,1,matUtrans#H,2,fixpoint#M0,M1,Q,#adjoint#N0@.dot#P@.dot#N0@+#adjoint#N1@.dot#P@.dot#N1@+#adjoint#N2@.dot#P@.dot#N2@+#adjoint#N3@.dot#P@.dot#N3@+mat0@@@@@@@@@@@@@,I@'
 #term='order#matUtrans#Or,10,matUtrans#H,0,matUtrans#H,1,matUtrans#Ph,10,matUtrans#H,0,matUtrans#H,1,G@@@@@@,Q@'
@@ -129,4 +154,3 @@ term=term.replace('(adjoint(C_U','C(adjoint(C_U')
 #extract_record(term)
 result=eval(term)
 print result==0
-
