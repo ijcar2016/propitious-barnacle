@@ -9,16 +9,12 @@ fun translate t =
   let
     fun trans t =
       (case t of
-        @{term "op = :: Mat\<Rightarrow>Mat\<Rightarrow>bool"} $ t $ u  =>
-           Buffer.add "check_I#"#>
-           trans t#>
-           Buffer.add "@"
-     | Free (n,@{typ Mat })=>
+      Free (n,@{typ Mat })=>
         Buffer.add n
-      | _ => error "inacceptable term ")
+      | _ =>Buffer.add "0")  (*error "inacceptable term ")*)
   in Buffer.content (trans t Buffer.empty) 
 end;
-(*  (translate @{term "a=I"});  *)
+ 
 
 fun translate1 t =
   let
@@ -28,6 +24,12 @@ fun translate1 t =
            Buffer.add "check_I#"#>
            trans t#>
            Buffer.add "@"
+       | @{term " sum_1 :: nat list \<Rightarrow> nT \<Rightarrow> Mat"} $ t $ u  =>  
+        Buffer.add "I" 
+       | @{term " sum_2 :: nat list \<Rightarrow> nT \<Rightarrow> Mat"} $ t $ u  =>  
+        Buffer.add "I" 
+     | @{term " wellDefined ::com\<Rightarrow>bool"} $ t  =>  
+        Buffer.add "0" 
       | @{term " mat_add :: Mat \<Rightarrow> Mat \<Rightarrow> Mat"} $ t $ u  =>  
         Buffer.add "#" #>(* ( *)
         trans t #>
@@ -132,8 +134,6 @@ fun translate1 t =
       | _ => error "inacceptable term tao")
   in Buffer.content (trans t Buffer.empty) 
 end;
-
-
 fun isTrue x = 
       if x="True\n" then true
       else false   
@@ -156,9 +156,8 @@ ML{*
       (matUtrans (dag H) 0 (mat_add (mat_mult (mat_mult (dag M0) Q) M0)
       (mat_add (mat_mult (mat_mult (dag M1) Q) M1) zero)))))))"});
 *)
-(*decide (translate1 @{term "basic.less Q (matUtrans Or 10 (matUtrans
- H 0 (matUtrans H (Suc 0) (matUtrans Ph 10 (matUtrans H 0 (matUtrans H 
-(Suc 0) G))))))"});*)
+
+
 
 val quantum_oracle_tac =
   CSUBGOAL (fn (goal, i) =>
