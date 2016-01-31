@@ -47,10 +47,12 @@ exchange:"Tr (mat_mult a b) =Tr (mat_mult b a)"and
 (*  (m1*m2)*m3=m1*(m2*m3)   *)
 mult_exchange:"mat_mult (mat_mult m1 m2) m3=mat_mult m1 (mat_mult m2 m3)"and
 (*zero*)
+zero_add:"mat_add a zero=a"and
 zero_mult_r:"mat_mult a zero=zero"and
 zero_mult_l:"mat_mult zero b=zero"and
 zero_tr: "Tr zero = 0" and
 rho_zero:"\<forall> a. a \<in> rhoMat \<longrightarrow> less zero  a" and
+a:"less zero a\<Longrightarrow>a\<in>rhoMat"and
 I_zero:"less zero I" and
 pred:"\<forall> a. a\<in>predMat\<longrightarrow>less a I" and
 (*(a+b)*c=ac+bc*)
@@ -69,16 +71,18 @@ U_dag:"\<forall> a. a \<in> uMat \<longrightarrow> mat_mult (dag a) a=I"and
 Ident:"mat_mult I a=a"and
 (* less a b \<Rightarrow> less (a+c) (b+c)*)
 less1:"less a b\<Longrightarrow>less (mat_add c a) (mat_add c b )"and
+less5:"less a b\<Longrightarrow>less (mat_sub a c) (mat_sub b c)" and
+sub_self:"mat_sub a a=zero"and
 (*  a\<sqsubseteq>b\<Longrightarrow>tr ac\<le>tr bc for all \<rho> mats  *)
 less2:"less a b\<Longrightarrow>(\<forall> c. c \<in> rhoMat \<longrightarrow> tr (mat_mult a c) \<le>tr (mat_mult b c)) "and
 (* a\<ge>0\<Longrightarrow>m*a*m.T\<ge>0  *)
 less3:" less zero  a\<Longrightarrow>less zero (mat_mult (mat_mult b a) (dag b))"and
 (*a>0 b>0\<Longrightarrow>Tr (ab)\<ge>0*)
-less4:"less zero a\<Longrightarrow>less zero b\<Longrightarrow>Tr (mat_mult a b) \<ge>0"
+less4:"less zero a\<Longrightarrow>less zero b\<Longrightarrow>Tr (mat_mult a b) \<ge>0"and
+(* a\<ge>b c\<ge>d\<Longrightarrow>a+c\<ge>b+d*)
+ less6:"less a b\<Longrightarrow>less c d\<Longrightarrow>less (mat_add a c) (mat_add b d)"
 
-
-
-lemma c:"\<forall> c. c \<in> rhoMat \<longrightarrow>  0 <=Tr c"
+lemma rho_tr:"\<forall> c. c \<in> rhoMat \<longrightarrow>  0 <=Tr c"
 by (metis I_zero Ident less2 zero_mult_l zero_tr)
 
 
